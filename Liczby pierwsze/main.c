@@ -4,7 +4,7 @@
 
 //Czy podzielna przez pewne liczby
 int ifDevide(int a) {
-	if (a % 2 == 0)
+	if (a % 7 == 0 || a % 11 == 0)
 		return 1;
 	else
 		return 0;
