@@ -1,15 +1,18 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 #define size 1000
-
+#pragma warning(disable : 4996)
 
 //Czy podzielna przez pewne liczby
-int ifDevide(int a) {
-	/*if (a % 7 == 0 || a % 11 == 0)
-		return 1;
-	else*/
-		return 0;
+int ifDevide(int a,short *div,int len) {
+	for (short i=0; i < len; i++) {
+		if (a % div[i]==0) {
+			return 1;
+		}
+	}
+	return 0;
 }
 
 //Czy liczba pierwsza
@@ -40,12 +43,27 @@ void right(int *x,int *y){
 }
 
 void main(int argc, char** argv) {
-	FILE* F = fopen("Liczby.txt","w+");
+	if (argc < 2) {
+		fprintf(stderr, "Nie podano pliku wejsciowego!");
+		return;
+	}
+	FILE* F = fopen(argv[1], "w+");
+	if (F == NULL) {
+		fprintf(stderr, "Nie odnaleziono pliku!");
+		return;
+	}
 	fprintf(F, "Czy_pierwsza;x;y\n");//nagłówek
+	//Stworzenie tablicy dzielników
+	short n = argc - 2;
+	short *divide=malloc(sizeof(short)*n);
+	for (int i = 0; i < n; i++) {
+		short d = atoi(argv[i + 2]);
+		divide[i] = d;
+	}
 	int x=size/2;
 	int y=x;
 	void (*function[])(int*,int*)={right,down,left,up};
-	fprintf(F,"%d;%d;%d\n",0,x,y);
+	fprintf(F,"%d;%d;%d\n",0,x,y); //zapisanie jedynki
 	x++;
 	int number = 1; //Obecna liczba
 	int way=0; //przebyta droga od ostatniego zakrętu
@@ -55,9 +73,8 @@ void main(int argc, char** argv) {
 	long i=1;
 	while(i<iteration){
 		number++;
-		if(ifDevide(number))
+		if(ifDevide(number,divide,n))
 			continue;
-		
 		fprintf(F,"%d;%d;%d\n",ifFirst(number),x,y);
 		function[direction](&x,&y);
 		way++;
